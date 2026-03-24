@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
+int queue[MAX];
+int front = 0, rear = 0, waiting = 0;
+
+void line() {
+    printf("_______________________________________________________________\n");
+}
+// waiting customer display
+void show_queue() {
+    printf("Waiting Queue : ");
+    if (waiting == 0) {
+        printf("Empty\n");
+        return;
+    }
+
+    for (int i = 0; i < waiting; i++) {
+        int idx = (front + i) % MAX;
+        printf("C%d", queue[idx]);
+        if (i != waiting - 1) printf(", ");
+    }
+    printf("\n");
+}
+
+void pause_screen() {
+    printf("\nPress Enter to proceed...");
+    while (getchar() != '\n'); 
+    getchar();              
+}
+
+int main() {
+    int chairs, customers;
+    int step = 1;
+
+    printf("============================================================\n");
+    printf("          SLEEPING BARBER PROBLEM SIMULATION\n");
+    printf("============================================================\n");
+
+    printf("Enter number of waiting chairs: ");
+    scanf("%d", &chairs);
+
+    printf("Enter number of customers: ");
+    scanf("%d", &customers);
+
+    getchar(); // clear newline after scanf
+
+    for (int i = 1; i <= customers; i++) {
+
+        line();
+        printf("STEP %d\n", step++);
+        line();
+
+        printf("Customer %d arrived\n", i);
+
+        if (waiting < chairs) {
+            queue[rear] = i;
+            rear = (rear + 1) % MAX;
+            waiting++;
+
+            printf("Status        : Waiting\n");
+            show_queue();
+            printf("Shop Status   : %d customer(s) waiting\n", waiting);
+
+            pause_screen();
+
+            line();
+            printf("STEP %d\n", step++);
+            line();
+
+            int served = queue[front];
+            front = (front + 1) % MAX;
+            waiting--;
+
+            printf("Barber calls  : Customer %d\n", served);
+            printf("Service       : Cutting hair of Customer %d\n", served);
+            show_queue();
+            printf("Shop Status   : %d customer(s) waiting\n", waiting);
+
+            pause_screen();
+        }
+        else {
+            printf("Status        : Left (No chair available)\n");
+            show_queue();
+            printf("Shop Status   : Shop Full\n");
+
+            pause_screen();
+        }
+    }
+
+    line();
+    printf("No Customer left !!\nBarber is going to sleep\n");
+    printf("Simulation Completed Successfully\n");
+    line();
+
+    return 0;
+}
